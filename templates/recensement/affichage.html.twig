@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+{% block title %}Habitants{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    td,
+th {
+  border: 1px solid rgb(190, 190, 190);
+  padding: 10px;
+}
+
+td {
+  text-align: center;
+}
+
+tr:nth-child(even) {
+  background-color: #eee;
+}
+
+th[scope='col'] {
+  background-color: #696969;
+  color: #fff;
+}
+
+th[scope='row'] {
+  background-color: #d7d9f2;
+}
+
+caption {
+  padding: 10px;
+  caption-side: bottom;
+}
+
+table {
+  border-collapse: collapse;
+  border: 2px solid rgb(200, 200, 200);
+  letter-spacing: 1px;
+  font-family: sans-serif;
+  font-size: 0.8rem;
+}
+</style>
+
+<div class="example-wrapper">
+    <h1> Liste des Habitant de la ville de Saint Denis en Val</h1>
+<table>
+<tr>
+    <th scope="col">Nom</th>
+    <th scope="col">Prenom</th>
+    <th scope="col">Date de Naissance</th>
+  </tr>
+  {% for habitant in habitants %}
+  <tr>
+    <th scope="row">{{habitant.Nom}}</th>
+    <td>{{habitant.Prenom}}</td>
+    <td><time>{{habitant.DateDeNaissance|date('d-m-Y')}}</time></td>
+  </tr>
+  {% endfor %}
+ 
+ </table>
+</div>
+{% endblock %}
