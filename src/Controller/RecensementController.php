@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Habitant;
 use App\Entity\Habitation;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Form\HabitantType;
 use Symfony\Component\Routing\Annotation\Route;
 use \DateTime;
 
@@ -33,9 +34,9 @@ class RecensementController extends AbstractController
             'habitants'=>$habitants,
         ]); ;
     }
-/* Ajout d'un jeu de test
-    #[Route('/Add_User', name: 'app_recensement_add')]
-    public function add(HabitationRepository $habitationRepository, EntityManagerInterface $em): Response
+
+    #[Route('/Add_User_test', name: 'app_recensement_add')]
+    public function add_test(HabitationRepository $habitationRepository, EntityManagerInterface $em): Response
     {
         $habitation = new Habitation();
         $habitation->setVille("Saint Denis en Val")->setCodePostal("45560")->setNumeroDeVoie("6")->setRue("la bergoennerie")->setTypeVoie("rue")->setPays("France")->setComplement("Aucun");
@@ -50,34 +51,34 @@ class RecensementController extends AbstractController
             'controller_name' => 'RecensementController',
         ]);
     }
-*/
-    /*
+
+    
     #[Route('/Add_User', name: 'app_recensement_add')]
-    public function add(Request $request): Response
+    public function add(): Response
     {
-        $data = $request->getContent();
-        $data = json_decode($data, true);
-
-        return new JsonResponse ;
+        $habitant = new Habitant();
+        $form = $this->createForm(HabitantType::class, $habitant);
+        return $this->render('recensement/Ajout.html.twig', [
+            'controller_name' => 'RecensementController',
+            'form' => $form,            
+        ]); ;
     }
 
-    #[Route('/Modify_User', name: 'app_recensement_modify')]
-    public function modify(Request $request): Response
+    #[Route('/Modify_User/{id}', name: 'app_recensement_modify')]
+    public function modify(Habitant $habitant,EntityManagerInterface $em): Response
     {
-        $data = $request->getContent();
-        $data = json_decode($data, true);
-
-
-        return new JsonResponse ;
-    }
-
-    #[Route('/Delete_User', name: 'app_recensement_delete')]
-    public function delete(Request $request): Response
-    {
-        $data = $request->getContent();
-        $data = json_decode($data, true);
         
+        return $this->render('recensement/modification.html.twig', [
+            'controller_name' => 'RecensementController',
+            'habitant'=>$habitant,
+        ]); ;
+    }
 
-        return new JsonResponse ;
-    }*/
+    #[Route('/Delete_User/{id}', name: 'app_recensement_delete')]
+    public function delete(Habitant $habitant,EntityManagerInterface $em): Response
+    {
+      $em->remove($habitant);
+      $em->flush();
+        return $this->redirect('/ListHabitant');
+    }
 }

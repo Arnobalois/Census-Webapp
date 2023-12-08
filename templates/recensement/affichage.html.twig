@@ -55,6 +55,8 @@ table {
     <th scope="row">{{habitant.Nom}}</th>
     <td>{{habitant.Prenom}}</td>
     <td><time>{{habitant.DateDeNaissance|date('d-m-Y')}}</time></td>
+    <td><a href="{{ path('app_recensement_modify', {id: habitant.id}) }}">Modifier</a></td>
+    <td><a href="{{ path('app_recensement_delete', {id: habitant.id}) }}">Supprimer</a></td>
   </tr>
   {% endfor %}
  
