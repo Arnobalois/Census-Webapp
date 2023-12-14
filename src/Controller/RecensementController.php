@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Form\HabitantType;
 use Symfony\Component\Routing\Annotation\Route;
 use \DateTime;
+use Symfony\Component\HttpFoundation\Request;
 
 class RecensementController extends AbstractController
 {
@@ -54,10 +55,23 @@ class RecensementController extends AbstractController
 
     
     #[Route('/Add_User', name: 'app_recensement_add')]
-    public function add(): Response
+    public function add(Request $request,EntityManagerInterface $em): Response
     {
         $habitant = new Habitant();
         $form = $this->createForm(HabitantType::class, $habitant);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // $form->getData() holds the submitted values
+            // but, the original `$task` variable has also been updated
+            $habitant = $form->getData();
+
+            $em->persist($habitant);
+        
+         $em->flush();
+
+            return $this->redirectToRoute('task_success');
+        }
         return $this->render('recensement/Ajout.html.twig', [
             'controller_name' => 'RecensementController',
             'form' => $form,            
