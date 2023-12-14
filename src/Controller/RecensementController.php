@@ -16,7 +16,7 @@ use \DateTime;
 
 class RecensementController extends AbstractController
 {
-    #[Route('/recensement', name: 'app_recensement')]
+    #[Route('/', name: 'app_recensement')]
     public function index(): Response
     {
         return $this->render('recensement/index.html.twig', [
@@ -35,13 +35,13 @@ class RecensementController extends AbstractController
         ]); ;
     }
 
-    #[Route('/Add_User_test', name: 'app_recensement_add')]
+    #[Route('/Add_User_test', name: 'app_recensement_addTest')]
     public function add_test(HabitationRepository $habitationRepository, EntityManagerInterface $em): Response
     {
         $habitation = new Habitation();
         $habitation->setVille("Saint Denis en Val")->setCodePostal("45560")->setNumeroDeVoie("6")->setRue("la bergoennerie")->setTypeVoie("rue")->setPays("France")->setComplement("Aucun");
         $habitant = new Habitant();
-        $habitant->setNom("Balois")->setPrenom("Arno")->setGenre("Homme")->setDateDeNaissance(DateTime::createFromFormat('d/m/Y','09/01/2001'));
+        $habitant->setNom("B")->setPrenom("A")->setGenre("Homme")->setDateDeNaissance(DateTime::createFromFormat('d/m/Y','09/01/2001'));
         $habitation->addHabitant($habitant);
 
         $em->persist($habitation);
@@ -68,9 +68,11 @@ class RecensementController extends AbstractController
     public function modify(Habitant $habitant,EntityManagerInterface $em): Response
     {
         
+        $form = $this->createForm(HabitantType::class, $habitant);
         return $this->render('recensement/modification.html.twig', [
             'controller_name' => 'RecensementController',
             'habitant'=>$habitant,
+            'form' => $form,
         ]); ;
     }
 
