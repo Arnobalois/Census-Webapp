@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Entity\Habitant;
 use App\Entity\Habitation;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,13 +17,15 @@ class HabitantType extends AbstractType
         $builder
             ->add('Nom')
             ->add('Prenom')
-            ->add('DateDeNaissance')
+            ->add('DateDeNaissance', DateType::class, [
+                'years' => range(date('Y') - 120, date('Y')),
+                'months' => range(1, 12),
+                'days' => range(1, 31),
+                'format' => 'dd MM yyyy',])
+          
             ->add('Genre')
-            ->add('habitation', EntityType::class, [
-                'class' => Habitation::class,
-'choice_label' => 'id',
-            ])
-            ->add('save', SubmitType::class, ['label' => 'Create Task'])
+            ->add('habitation', HabitationType::class)
+            ->add('save', SubmitType::class, ['label' => 'Enregistrer'])
         ;
     }
 

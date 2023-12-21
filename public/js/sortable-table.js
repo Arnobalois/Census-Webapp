@@ -1,52 +1,4 @@
-{% extends 'base.html.twig' %}
-{% block title %}Habitants{% endblock %}
-{% block stylesheets %}   
-<link rel="stylesheet" href="{{ asset('css/sort-table.css') }}" />
-{% endblock %}
-
-{% block javascripts %}
-
-{% endblock %}
-{% block body %}
-
- <h1> Liste des Habitant de la ville de Saint Denis en Val</h1>
-<div class="table-wrap">
-   
-<table class="sortable">
-<thead>
-<tr>
-    <th ><button>
-            Nom
-            <span aria-hidden="true"></span>
-          </button></th>
-    <th aria-sort="ascending"><button>
-            Prenom
-            <span aria-hidden="true"></span>
-          </button></th>
-    <th class="no-sort">Date de Naissance</th>
-    <th class="no-sort">Code Postal</th>
-    <th aria-sort="ascending"><button>
-            Adresse
-            <span aria-hidden="true"></span>
-          </button></th>
-  </tr>
-   </thead>
-   <tbody>
-  {% for habitant in habitants %}
-  <tr>
-    <td>{{habitant.Nom}}</th>
-    <td>{{habitant.Prenom}}</td>
-    <td><time>{{habitant.DateDeNaissance|date('d-m-Y')}}</time></td>
-    <td>{{habitant.Habitation.CodePostal}}</td>
-    <td>{{habitant.Habitation.Adresse}}</td>
-    <td><a href="{{ path('app_recensement_modify', {id: habitant.id}) }}">Modifier</a></td>
-    <td><a href="{{ path('app_recensement_delete', {id: habitant.id}) }}">Supprimer</a></td>
-  </tr>
-  {% endfor %}
-  </body>
- </table>
- <script>
- 'use strict';
+'use strict';
 
 class SortableTable {
   constructor(tableNode) {
@@ -204,7 +156,3 @@ window.addEventListener('load', function () {
     new SortableTable(sortableTables[i]);
   }
 });
-
- </script>
-</div>
-{% endblock %}

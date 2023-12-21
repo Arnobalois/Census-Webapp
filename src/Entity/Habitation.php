@@ -16,10 +16,7 @@ class Habitation
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $rue = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $numeroDeVoie = null;
+    private ?string $Adresse = null;
 
     #[ORM\Column(length: 255)]
     private ?string $CodePostal = null;
@@ -33,11 +30,8 @@ class Habitation
     #[ORM\Column(length: 255)]
     private ?string $Complement = null;
 
-    #[ORM\OneToMany(mappedBy: 'habitation', targetEntity: Habitant::class ,  cascade:['persist'] )]
+    #[ORM\OneToMany(mappedBy: 'habitation', targetEntity: Habitant::class )]
     private Collection $Habitants;
-
-    #[ORM\Column(length: 255)]
-    private ?string $TypeVoie = null;
 
     public function __construct()
     {
@@ -49,26 +43,14 @@ class Habitation
         return $this->id;
     }
 
-    public function getRue(): ?string
+    public function getAdresse(): ?string
     {
-        return $this->rue;
+        return $this->Adresse;
     }
 
-    public function setRue(string $rue): static
+    public function setAdresse(string $adresse): static
     {
-        $this->rue = $rue;
-
-        return $this;
-    }
-
-    public function getNumeroDeVoie(): ?string
-    {
-        return $this->numeroDeVoie;
-    }
-
-    public function setNumeroDeVoie(string $numeroDeVoie): static
-    {
-        $this->numeroDeVoie = $numeroDeVoie;
+        $this->Adresse = $adresse;
 
         return $this;
     }
@@ -147,18 +129,6 @@ class Habitation
                 $habitant->setHabitation(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getTypeVoie(): ?string
-    {
-        return $this->TypeVoie;
-    }
-
-    public function setTypeVoie(string $TypeVoie): static
-    {
-        $this->TypeVoie = $TypeVoie;
 
         return $this;
     }

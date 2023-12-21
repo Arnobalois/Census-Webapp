@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use \Doctrine\Common\Util\Debug;
 use App\Repository\HabitantRepository;
 use App\Repository\HabitationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,57 +20,52 @@ class RecensementController extends AbstractController
     #[Route('/', name: 'app_recensement')]
     public function index(): Response
     {
+        
         return $this->render('recensement/index.html.twig', [
             'controller_name' => 'RecensementController',
         ]);
     }
 
     #[Route('/ListHabitant', name: 'app_recensement_affichage')]
-    public function AffichageHabitant(HabitantRepository $habitantRepository): Response
+    public function AffichageHabitant(HabitantRepository $habitantRepository,HabitationRepository $habitationRepository): Response
     {
         $habitants = $habitantRepository->findAll();
-        
         return $this->render('recensement/affichage.html.twig', [
             'controller_name' => 'RecensementController',
             'habitants'=>$habitants,
         ]); ;
     }
-
-    #[Route('/Add_User_test', name: 'app_recensement_addTest')]
-    public function add_test(HabitationRepository $habitationRepository, EntityManagerInterface $em): Response
-    {
-        $habitation = new Habitation();
-        $habitation->setVille("Saint Denis en Val")->setCodePostal("45560")->setNumeroDeVoie("6")->setRue("la bergoennerie")->setTypeVoie("rue")->setPays("France")->setComplement("Aucun");
-        $habitant = new Habitant();
-        $habitant->setNom("B")->setPrenom("A")->setGenre("Homme")->setDateDeNaissance(DateTime::createFromFormat('d/m/Y','09/01/2001'));
-        $habitation->addHabitant($habitant);
-
-        $em->persist($habitation);
-        
-        $em->flush();
-        return $this->render('recensement/index.html.twig', [
-            'controller_name' => 'RecensementController',
-        ]);
-    }
-
     
     #[Route('/Add_User', name: 'app_recensement_add')]
-    public function add(Request $request,EntityManagerInterface $em): Response
+    public function add(Request $request,EntityManagerInterface $em,HabitationRepository $habitationRepository): Response
     {
         $habitant = new Habitant();
         $form = $this->createForm(HabitantType::class, $habitant);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
+            $persist = false ;
+            $currentHabitation = $form->get("habitation")->getData();
             $habitant = $form->getData();
+            $currentHabitationAdresse = strtolower(preg_replace('/\s+/', '', $currentHabitation->getAdresse()));
+            $habitations = $habitationRepository->findAll();
+            foreach( $habitations as $habitation ) {
+                $adresse = preg_replace('/\s+/', '', $habitation->getAdresse());
 
-            $em->persist($habitant);
-        
-         $em->flush();
+                if(strtolower($adresse) == $currentHabitationAdresse && $currentHabitation->getCodePostal() == $habitation->getCodePostal()&& strtolower($currentHabitation->getVille()) == strtolower($habitation->getVille()) && strtolower($currentHabitation->getPays()) == strtolower($habitation->getPays())){
+                    $habitation->addHabitant($habitant);
+                    $em->persist($habitation);
+                    $persist = true ;
+                    break;
+                }
+            }
+            if(!$persist){
+                $currentHabitation->addHabitant($habitant);
+                $em->persist($currentHabitation);
+            }
+            $em->flush();
 
-            return $this->redirectToRoute('task_success');
+            return $this->redirect('/ListHabitant');
         }
         return $this->render('recensement/Ajout.html.twig', [
             'controller_name' => 'RecensementController',
@@ -79,13 +74,54 @@ class RecensementController extends AbstractController
     }
 
     #[Route('/Modify_User/{id}', name: 'app_recensement_modify')]
-    public function modify(Habitant $habitant,EntityManagerInterface $em): Response
+    public function modify(Request $request,Habitant $oldhabitant,EntityManagerInterface $em,HabitationRepository $habitationRepository): Response
     {
+        dump("je suis ici");
+        $form = $this->createForm(HabitantType::class, $oldhabitant);
+        $form->handleRequest($request);
+        $habitations = $em->getRepository(Habitation::class)->findAll();
+        dump($habitations);
+        if ($form->isSubmitted() && $form->isValid()) {
+            dump("je suis ici");
+            $found = false ;
+            $currentHabitation = $form->get("habitation")->getData();
+            $habitant = $form->getData();
+            $currentHabitationAdresse = strtolower(preg_replace('/\s+/', '', $currentHabitation->getAdresse()));
+
+            foreach( $habitations as $habitation ) {
+                $adresse = preg_replace('/\s+/', '', $habitation->getAdresse());
+                dump($adresse);
+                dump($currentHabitationAdresse);
+                if(strtolower($adresse) == $currentHabitationAdresse && $currentHabitation->getCodePostal() == $habitation->getCodePostal()&& strtolower($currentHabitation->getVille()) == strtolower($habitation->getVille()) && strtolower($currentHabitation->getPays()) == strtolower($habitation->getPays())){
+                    $habitation->addHabitant($habitant);
+                    $em->persist($habitation);
+                    $found = true ;
+                    dump("je suis ici dans la verif exist");
+                    break;
+                }else if ($habitation->getId() == $oldhabitant->getHabitation()->getId()){
+                    $habitation->removeHabitant($oldhabitant);
+                    dump("je suis ici dans l'autre ");
+                }
+            }
         
-        $form = $this->createForm(HabitantType::class, $habitant);
+            if(!$found){
+                $oldhabitant->getHabitation()->removeHabitant($habitant);
+                $newHabitation = new Habitation();
+                $newHabitation->setAdresse($currentHabitation->getAdresse());
+                $newHabitation->setPays($currentHabitation->getPays());
+                $newHabitation->setCodePostal($currentHabitation->getCodePostal());
+                $newHabitation->setVille($currentHabitation->getVille());
+                $newHabitation->setComplement($currentHabitation->getComplement());
+                $newHabitation->addHabitant($habitant);
+                $em->persist($currentHabitation);
+            }
+        // $em->flush();
+
+            //return $this->redirect('/ListHabitant');
+        }
+    
         return $this->render('recensement/modification.html.twig', [
             'controller_name' => 'RecensementController',
-            'habitant'=>$habitant,
             'form' => $form,
         ]); ;
     }
@@ -96,5 +132,13 @@ class RecensementController extends AbstractController
       $em->remove($habitant);
       $em->flush();
         return $this->redirect('/ListHabitant');
+    }
+
+    #[Route('/Rechercher', name: 'app_recensement_rechercher')]
+    public function RechercheHabitant(Request $request): Response
+    {
+        return $this->render('recensement/recherche.html.twig', [
+            'controller_name' => 'RecensementController',
+        ]);
     }
 }

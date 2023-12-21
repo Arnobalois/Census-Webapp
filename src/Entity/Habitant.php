@@ -26,7 +26,7 @@ class Habitant
     #[ORM\Column(length: 255)]
     private ?string $Genre = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Habitants')]
+    #[ORM\ManyToOne(inversedBy: 'Habitants' )]
     #[ORM\JoinColumn(nullable: false)]
     private ?Habitation $habitation = null;
 
