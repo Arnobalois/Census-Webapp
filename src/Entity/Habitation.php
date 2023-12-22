@@ -18,18 +18,6 @@ class Habitation
     #[ORM\Column(length: 255)]
     private ?string $Adresse = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $CodePostal = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $Ville = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $Pays = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $Complement = null;
-
     #[ORM\OneToMany(mappedBy: 'habitation', targetEntity: Habitant::class, cascade: ['persist'])]
     private Collection $Habitants;
 
@@ -51,54 +39,6 @@ class Habitation
     public function setAdresse(string $adresse): static
     {
         $this->Adresse = $adresse;
-
-        return $this;
-    }
-
-    public function getCodePostal(): ?string
-    {
-        return $this->CodePostal;
-    }
-
-    public function setCodePostal(string $CodePostal): static
-    {
-        $this->CodePostal = $CodePostal;
-
-        return $this;
-    }
-
-    public function getVille(): ?string
-    {
-        return $this->Ville;
-    }
-
-    public function setVille(string $Ville): static
-    {
-        $this->Ville = $Ville;
-
-        return $this;
-    }
-
-    public function getPays(): ?string
-    {
-        return $this->Pays;
-    }
-
-    public function setPays(string $Pays): static
-    {
-        $this->Pays = $Pays;
-
-        return $this;
-    }
-
-    public function getComplement(): ?string
-    {
-        return $this->Complement;
-    }
-
-    public function setComplement(string $Complement): static
-    {
-        $this->Complement = $Complement;
 
         return $this;
     }

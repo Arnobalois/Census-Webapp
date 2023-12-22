@@ -23,18 +23,14 @@ class HabitantType extends AbstractType
                 'months' => range(1, 12),
                 'days' => range(1, 31),
                 'format' => 'dd MM yyyy',])
-          
-            ->add('Genre')
-            ->add('Modifier', ChoiceType::class, [
+            ->add('Genre',ChoiceType::class, [
                 'choices'  => [
-                    
-                    'l\'adresse de l\'habitation' => true,
-                    'l\'adresse de l\'habitant' => false,
+                    'Homme' => 'homme',
+                    'Femme' => 'femme',
+                    'Autre' => 'autre'
                 ],
-                'label' => 'Que voulez-vous modifier ?',
-                'empty_data'=>true , 
-                'mapped' => false,
-            ])
+                'empty_data'=>'autre',]
+            )            
             ->add('habitation', HabitationType::class)
             ->add('save', SubmitType::class, ['label' => 'Enregistrer'])
         ;

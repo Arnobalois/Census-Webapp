@@ -11,6 +11,8 @@ use App\Entity\Habitant;
 use App\Entity\Habitation;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\HabitantType;
+use App\Form\ModificationType;
+use App\Form\AjoutType;
 use Symfony\Component\Routing\Annotation\Route;
 use \DateTime;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +41,7 @@ class RecensementController extends AbstractController
     #[Route('/Add_User', name: 'app_recensement_add')]
     public function add(Request $request,EntityManagerInterface $em,HabitationRepository $habitationRepository): Response
     {
+        $habitations = $habitationRepository->findAll();
         $habitant = new Habitant();
         $form = $this->createForm(HabitantType::class, $habitant);
 
@@ -48,11 +51,10 @@ class RecensementController extends AbstractController
             $currentHabitation = $form->get("habitation")->getData();
             $habitant = $form->getData();
             $currentHabitationAdresse = strtolower(preg_replace('/\s+/', '', $currentHabitation->getAdresse()));
-            $habitations = $habitationRepository->findAll();
             foreach( $habitations as $habitation ) {
                 $adresse = preg_replace('/\s+/', '', $habitation->getAdresse());
 
-                if(strtolower($adresse) == $currentHabitationAdresse && $currentHabitation->getCodePostal() == $habitation->getCodePostal()&& strtolower($currentHabitation->getVille()) == strtolower($habitation->getVille()) && strtolower($currentHabitation->getPays()) == strtolower($habitation->getPays())){
+                if(strtolower($adresse) == $currentHabitationAdresse ){
                     $habitation->addHabitant($habitant);
                     $em->persist($habitation);
                     $persist = true ;
@@ -76,37 +78,47 @@ class RecensementController extends AbstractController
     #[Route('/Modify_User/{id}', name: 'app_recensement_modify')]
     public function modify(Request $request,Habitant $habitant,EntityManagerInterface $em,HabitationRepository $habitationRepository): Response
     {
+        $habitations = $habitationRepository->findAll();
+        $oldAdresse = $habitant->getHabitation()->getAdresse();
+        dump($habitations);
         $form = $this->createForm(HabitantType::class, $habitant);
         $form->handleRequest($request);
-        $habitations = $habitationRepository->findAll();
-        if ($form->isSubmitted() && $form->isValid()) { 
-
-            $currentHabitant = $form->getData();
-            $currentHabitation = $form->get("habitation")->getData();
-            $modifierHabitation = $form->get("Modifier")->getData();
-
-            if($modifierHabitation){
-                
-            }else{
-                $habitations = $habitationRepository->find($habitant->getHabitation()->getId());
-                $habitations->removeHabitant($habitant);
-            }
-            $habitant = $form->getData();
-            $currentHabitationAdresse = strtolower(preg_replace('/\s+/', '', $currentHabitation->getAdresse()));
+        dump($habitations);
+        $found = false ;
         
-            if(!$found){
-                $newHabitation = new Habitation();
-                $newHabitation->setAdresse($currentHabitation->getAdresse());
-                $newHabitation->setPays($currentHabitation->getPays());
-                $newHabitation->setCodePostal($currentHabitation->getCodePostal());
-                $newHabitation->setVille($currentHabitation->getVille());
-                $newHabitation->setComplement($currentHabitation->getComplement());
-                $newHabitation->addHabitant($habitant);
-                $em->persist($currentHabitation);
+        if ($form->isSubmitted() && $form->isValid()) { 
+            
+            dump($habitations);
+            $currentHabitation = $habitant->getHabitation();
+            $currentHabitation->removeHabitant($habitant);
+            $newHabitationAdresse = $currentHabitation->getAdresse();
+            $currentHabitation->setAdresse($oldAdresse);
+            $newHabitationAdresseLowered =  strtolower(preg_replace('/\s+/', '', $newHabitationAdresse));
+            foreach( $habitations as $habitation ) {
+                $adresse = strtolower(preg_replace('/\s+/', '', $habitation->getAdresse()));
+                dump($adresse);
+                dump($newHabitationAdresseLowered);
+                if ( $adresse == $newHabitationAdresseLowered){
+                    dump("Une adresse identique trouvé");
+                    dump($habitation->getId());
+                    $habitation->addHabitant($habitant);
+                    $em->persist($habitation);
+                $found = true ;
+                break;
+                }
             }
-        // $em->flush();
+            if(!$found){
+                dump("Creation nouvelle adresse");
+                $newHabitation = new Habitation();
+                $newHabitation->setAdresse($newHabitationAdresse);
+                $newHabitation->addHabitant($habitant);
+                $em->persist($newHabitation);
+            }
+            
+            dump($habitant);
+        $em->flush();
 
-            //return $this->redirect('/ListHabitant');
+            return $this->redirect('/ListHabitant');
         }
 
         return $this->render('recensement/modification.html.twig', [

@@ -14,10 +14,6 @@ class HabitationType extends AbstractType
     {
         $builder
             ->add('Adresse')
-            ->add('CodePostal')
-            ->add('Ville')
-            ->add('Pays')
-            ->add('Complement')
             
         ;
     }
