@@ -31,13 +31,14 @@ class HabitationRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-//    public function findOneBySomeField($value): ?Habitation
-//    {
-//        return $this->createQueryBuilder('h')
-//            ->andWhere('h.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function getHabitantsForHabitat($habitatId): array
+    {
+        return $this->createQueryBuilder('h')
+            ->select('habitant.id', 'habitant.Prenom', 'habitant.Nom', 'habitant.DateDeNaissance')
+            ->leftJoin('h.Habitants', 'habitant')
+            ->where('h.id = :habitatId')
+            ->setParameter('habitatId', $habitatId)
+            ->getQuery()
+            ->getResult();
+    }
 }

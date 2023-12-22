@@ -24,11 +24,18 @@ class RecensementApiController extends AbstractController
         return new JsonResponse($habitants);
     }
     #[Route('/api/delete_user/{id}', name: 'app_recensement_delete')]
-    public function delete(Habitant $habitant,EntityManagerInterface $em): Response
+    public function delete(Habitant $habitant = null, EntityManagerInterface $em): Response
     {
-      $em->remove($habitant);
-      $em->flush();
-        return new JsonResponse(200);
+        // Check if the Habitant with the specified ID exists
+        if ($habitant === null) {
+            return new JsonResponse(['error' => 'Habitant not found'], 404);
+        }
+
+        // Remove and flush if the Habitant exists
+        $em->remove($habitant);
+        $em->flush();
+
+        return new JsonResponse(['sucess' => 'Habitant was successfully removed'], 200);
     }
 
     #[Route('/api/list_habitations', name: 'app_recensement_habitation_api')]
@@ -36,6 +43,19 @@ class RecensementApiController extends AbstractController
     {
 
         $habitants = $habitationRepository->getAllHomes();
+        
+        return new JsonResponse($habitants);
+    }
+
+    #[Route('/api/habitants_at_habitat/{id}', name: 'app_recensement_habitants_at_habitat_api')]
+    public function ApiHabitantsAtHabitat(Habitation $habitation = null,HabitationRepository $habitantRepository): Response
+    {
+        // Check if the Habitant with the specified ID exists
+        if ($habitation === null) {
+            return new JsonResponse(['error' => 'Habitation not found'], 404);
+        }
+        $id_habitat = $habitation->getId();
+        $habitants = $habitantRepository->getHabitantsForHabitat($id_habitat);
         
         return new JsonResponse($habitants);
     }
