@@ -142,4 +142,12 @@ class RecensementController extends AbstractController
             'controller_name' => 'RecensementController',
         ]);
     }
+    #[Route('/ListHabitantApi', name: 'app_recensement_affichage_api')]
+    public function AffichageHabitantApi(HabitantRepository $habitantRepository,HabitationRepository $habitationRepository): Response
+    {
+
+        $habitants = $habitantRepository->findAllArray();
+        
+        return new JsonResponse($habitants);
+    }
 }

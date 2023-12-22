@@ -21,20 +21,18 @@ class HabitantRepository extends ServiceEntityRepository
         parent::__construct($registry, Habitant::class);
     }
 
-//    /**
-//     * @return Habitant[] Returns an array of Habitant objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('h')
-//            ->andWhere('h.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('h.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * @return Habitant[] Returns an array of Habitant objects
+    */
+   public function findAllArray(): array
+   {
+       return $this->createQueryBuilder('u')
+           ->select('u.Nom, u.Prenom,u.DateDeNaissance, h.Adresse as Adresse, h.CodePostal as CodePostal')
+           ->leftJoin('u.habitation', 'h')
+           ->getQuery()
+           ->getResult()
+       ;
+   }
 
 //    public function findOneBySomeField($value): ?Habitant
 //    {
