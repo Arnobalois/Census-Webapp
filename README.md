@@ -16,9 +16,24 @@ This website implements a simple SCRUD (Search, Create, Read, Update, Delete) fu
 # How to use it
 ## Install dependencies 
 
+Install the symfony
+
+> Go on their [official website](https://symfony.com/download)
+
 Install the symfony dependencies
 ```sh
+$ apt install composer -y
 $ composer install
+```
+
+Install mysql (or other db) and start
+```sh
+$ apt install mysql-server -y
+$ sudo systemctl start mysql.service
+```
+Initialize the mysql secure installation
+```sh
+$ mysql_secure_installation
 ```
 Create the database
 ```sh
@@ -30,19 +45,29 @@ $ php bin/console make:migration
 
 $ php bin/console doctrine:migration:migrate
 ```
+
+Install node/npm if not already installed
+> For wsl : [official microsoft guide](https://learn.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-wsl)
+
 To compile the react code
 ```
 $ npm install -D @babel/preset-react --force
 ```
 
 ## Launch the website
-Start the symfony server
-```sh
-$ symfony server:start
-```
+
 Dynamically compile the react code
 ```sh
 $ npm run watch
 ```
 
+Start the symfony server
+```sh
+$ symfony server:start
+```
+
+Allez à l'url suivant : 
+```
+http://localhost:8000/
+```
 
