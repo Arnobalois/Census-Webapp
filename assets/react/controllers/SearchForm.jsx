@@ -4,30 +4,35 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
-
-
 const YourComponent = () => {
     const [people, setPeople] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPerson, setSelectedPerson] = useState(null);
+    const [selectedPersonId, setSelectedPersonId] = useState(null);
 
     const [show, setShow] = useState(false);
 
-    const handleClose = () => setShow(false);
+    // Fetch data from your API
+    const fetchData = async () => {
+        try {
+            axios.get('/api/list_habitants').then(
+                messages => { console.log(messages.data); setPeople(messages.data); });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    const handleClose = async (delete_item) => {
+        setShow(false);
+        if(delete_item){
+            await axios.delete(`/api/delete_user/${selectedPersonId}`);
+            fetchData();
+        }
+    }
     const handleShow = () => setShow(true);
 
 
     useEffect(() => {
-        // Fetch data from your API
-        const fetchData = async () => {
-            try {
-                axios.get('/ListHabitantApi').then(
-                    messages => { console.log(messages.data); setPeople(messages.data); });
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
         fetchData();
     }, []); // Empty dependency array ensures the effect runs only once when the component mounts
     const formatDate = (dob) => {
@@ -35,19 +40,21 @@ const YourComponent = () => {
         const formattedDate = new Intl.DateTimeFormat('en-GB').format(date);
         return formattedDate;
     };
-    const handleCancelDelete = () => {
-        // Close the confirmation dialog without deleting
-        setSelectedPerson(null);
-    };
-    const handleDelete = (personId) => {
+    const handleDelete = (personName,personId) => {
         // Open the delete confirmation dialog
-        setSelectedPerson(personId);
+        setSelectedPerson(personName);
+        setSelectedPersonId(personId);
         handleShow();
     };
+    const handleNew = () =>{
+        window.location.href = `/Add_User`;
+    }
 
     const handleModify = (personId) => {
         // Implement modify logic using your API
         // Make sure to handle errors appropriately
+        
+        window.location.href = `/Modify_User/${personId}`;
     };
 
     const filteredPeople = people.filter((person) =>
@@ -63,7 +70,7 @@ const YourComponent = () => {
                     className="form-control mx-2"
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <Button variant="primary" onClick={() => handleModify(person.id)}>Nouveau</Button>
+                <Button variant="primary" onClick={() => handleNew()}>Nouveau</Button>
             </div>
 
 
@@ -73,7 +80,6 @@ const YourComponent = () => {
                         <th >Nom de famille</th>
                         <th >Prénom</th>
                         <th >Date de Naissance</th>
-                        <th >Code postale</th>
                         <th >Adresse</th>
                         <th >Modifier</th>
                         <th >Supprimer</th>
@@ -85,7 +91,6 @@ const YourComponent = () => {
                             <td >{person.Nom}</td>
                             <td >{person.Prenom}</td>
                             <td >{formatDate(person.DateDeNaissance.date)}</td>
-                            <td >{person.CodePostal}</td>
                             <td >{person.Adresse}</td>
                             <td >
                                 <Button variant="primary" onClick={() => handleModify(person.id)}>
@@ -93,7 +98,7 @@ const YourComponent = () => {
                                 </Button>
                             </td>
                             <td >
-                                <Button variant="danger" onClick={() => handleDelete(person.Prenom)}>
+                                <Button variant="danger" onClick={() => handleDelete(person.Prenom,person.id)}>
                                     Supprimer
                                 </Button>
                             </td>
@@ -108,10 +113,10 @@ const YourComponent = () => {
                 </Modal.Header>
                 <Modal.Body>Étes-vous sûr de vouloir supprimer {selectedPerson}?</Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" onClick={() => handleClose(false)}>
                         Non
                     </Button>
-                    <Button variant="danger" onClick={handleClose}>
+                    <Button variant="danger" onClick={()=>handleClose(true)}>
                         Oui
                     </Button>
                 </Modal.Footer>

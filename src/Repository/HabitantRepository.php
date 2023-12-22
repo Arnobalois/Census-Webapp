@@ -27,7 +27,7 @@ class HabitantRepository extends ServiceEntityRepository
    public function findAllArray(): array
    {
        return $this->createQueryBuilder('u')
-           ->select('u.Nom, u.Prenom,u.DateDeNaissance, h.Adresse as Adresse, h.CodePostal as CodePostal')
+           ->select('u.id,u.Nom, u.Prenom,u.DateDeNaissance, h.Adresse as Adresse')
            ->leftJoin('u.habitation', 'h')
            ->getQuery()
            ->getResult()

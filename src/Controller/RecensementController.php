@@ -19,23 +19,20 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RecensementController extends AbstractController
 {
-    #[Route('/', name: 'app_recensement')]
-    public function index(): Response
+    #[Route('/', name: 'app_recensement_home')]
+    public function RechercheHabitant(Request $request): Response
     {
-        
-        return $this->render('recensement/index.html.twig', [
+        return $this->render('recensement/search_form.html.twig', [
             'controller_name' => 'RecensementController',
         ]);
     }
 
-    #[Route('/ListHabitant', name: 'app_recensement_affichage')]
-    public function AffichageHabitant(HabitantRepository $habitantRepository,HabitationRepository $habitationRepository): Response
+    #[Route('/habitats', name: 'app_recensement_habitats')]
+    public function ListeHabitat(Request $request): Response
     {
-        $habitants = $habitantRepository->findAll();
-        return $this->render('recensement/affichage.html.twig', [
+        return $this->render('recensement/list_habitations.html.twig', [
             'controller_name' => 'RecensementController',
-            'habitants'=>$habitants,
-        ]); ;
+        ]);
     }
     
     #[Route('/Add_User', name: 'app_recensement_add')]
@@ -67,7 +64,7 @@ class RecensementController extends AbstractController
             }
             $em->flush();
 
-            return $this->redirect('/ListHabitant');
+            return $this->redirect('/');
         }
         return $this->render('recensement/Ajout.html.twig', [
             'controller_name' => 'RecensementController',
@@ -118,36 +115,12 @@ class RecensementController extends AbstractController
             dump($habitant);
         $em->flush();
 
-            return $this->redirect('/ListHabitant');
+            return $this->redirect('/');
         }
 
         return $this->render('recensement/modification.html.twig', [
             'controller_name' => 'RecensementController',
             'form' => $form,
         ]); ;
-    }
-
-    #[Route('/Delete_User/{id}', name: 'app_recensement_delete')]
-    public function delete(Habitant $habitant,EntityManagerInterface $em): Response
-    {
-      $em->remove($habitant);
-      $em->flush();
-        return $this->redirect('/ListHabitant');
-    }
-
-    #[Route('/Rechercher', name: 'app_recensement_rechercher')]
-    public function RechercheHabitant(Request $request): Response
-    {
-        return $this->render('recensement/recherche.html.twig', [
-            'controller_name' => 'RecensementController',
-        ]);
-    }
-    #[Route('/ListHabitantApi', name: 'app_recensement_affichage_api')]
-    public function AffichageHabitantApi(HabitantRepository $habitantRepository,HabitationRepository $habitationRepository): Response
-    {
-
-        $habitants = $habitantRepository->findAllArray();
-        
-        return new JsonResponse($habitants);
     }
 }

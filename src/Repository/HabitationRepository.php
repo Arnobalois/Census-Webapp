@@ -21,21 +21,16 @@ class HabitationRepository extends ServiceEntityRepository
         parent::__construct($registry, Habitation::class);
     }
 
-//    /**
-//     * @return Habitation[] Returns an array of Habitation objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('h')
-//            ->andWhere('h.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('h.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
+    public function getAllHomes(): array
+    {
+        return $this->createQueryBuilder('h')
+            ->select('h.id, h.Adresse as Adresse, COUNT(u.id) as NbHabitants, AVG(u.DateDeNaissance) as AgeMoyen')
+            ->leftJoin('h.Habitants', 'u')
+            ->groupBy('h.id')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 //    public function findOneBySomeField($value): ?Habitation
 //    {
 //        return $this->createQueryBuilder('h')
