@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class HabitantType extends AbstractType
 {
@@ -24,6 +25,16 @@ class HabitantType extends AbstractType
                 'format' => 'dd MM yyyy',])
           
             ->add('Genre')
+            ->add('Modifier', ChoiceType::class, [
+                'choices'  => [
+                    
+                    'l\'adresse de l\'habitation' => true,
+                    'l\'adresse de l\'habitant' => false,
+                ],
+                'label' => 'Que voulez-vous modifier ?',
+                'empty_data'=>true , 
+                'mapped' => false,
+            ])
             ->add('habitation', HabitationType::class)
             ->add('save', SubmitType::class, ['label' => 'Enregistrer'])
         ;

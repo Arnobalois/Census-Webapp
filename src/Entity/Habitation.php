@@ -30,7 +30,7 @@ class Habitation
     #[ORM\Column(length: 255)]
     private ?string $Complement = null;
 
-    #[ORM\OneToMany(mappedBy: 'habitation', targetEntity: Habitant::class )]
+    #[ORM\OneToMany(mappedBy: 'habitation', targetEntity: Habitant::class, cascade: ['persist'])]
     private Collection $Habitants;
 
     public function __construct()

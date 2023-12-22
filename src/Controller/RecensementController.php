@@ -79,13 +79,20 @@ class RecensementController extends AbstractController
         dump("je suis ici");
         $form = $this->createForm(HabitantType::class, $oldhabitant);
         $form->handleRequest($request);
-        $habitations = $em->getRepository(Habitation::class)->findAll();
+        $habitations = $habitationRepository->findAll();
         dump($habitations);
         if ($form->isSubmitted() && $form->isValid()) {
             dump("je suis ici");
+            
             $found = false ;
             $currentHabitation = $form->get("habitation")->getData();
-            $habitant = $form->getData();
+            $modifierHabitation = $form->get("Modifier")->getData();
+            if($modifierHabitation){
+                
+            }else{
+                
+            }
+            /*$habitant = $form->getData();
             $currentHabitationAdresse = strtolower(preg_replace('/\s+/', '', $currentHabitation->getAdresse()));
 
             foreach( $habitations as $habitation ) {
@@ -114,12 +121,12 @@ class RecensementController extends AbstractController
                 $newHabitation->setComplement($currentHabitation->getComplement());
                 $newHabitation->addHabitant($habitant);
                 $em->persist($currentHabitation);
-            }
+            }*/
         // $em->flush();
 
             //return $this->redirect('/ListHabitant');
         }
-    
+
         return $this->render('recensement/modification.html.twig', [
             'controller_name' => 'RecensementController',
             'form' => $form,
