@@ -74,45 +74,27 @@ class RecensementController extends AbstractController
     }
 
     #[Route('/Modify_User/{id}', name: 'app_recensement_modify')]
-    public function modify(Request $request,Habitant $oldhabitant,EntityManagerInterface $em,HabitationRepository $habitationRepository): Response
+    public function modify(Request $request,Habitant $habitant,EntityManagerInterface $em,HabitationRepository $habitationRepository): Response
     {
-        dump("je suis ici");
-        $form = $this->createForm(HabitantType::class, $oldhabitant);
+        $form = $this->createForm(HabitantType::class, $habitant);
         $form->handleRequest($request);
         $habitations = $habitationRepository->findAll();
-        dump($habitations);
-        if ($form->isSubmitted() && $form->isValid()) {
-            dump("je suis ici");
-            
-            $found = false ;
+        if ($form->isSubmitted() && $form->isValid()) { 
+
+            $currentHabitant = $form->getData();
             $currentHabitation = $form->get("habitation")->getData();
             $modifierHabitation = $form->get("Modifier")->getData();
+
             if($modifierHabitation){
                 
             }else{
-                
+                $habitations = $habitationRepository->find($habitant->getHabitation()->getId());
+                $habitations->removeHabitant($habitant);
             }
-            /*$habitant = $form->getData();
+            $habitant = $form->getData();
             $currentHabitationAdresse = strtolower(preg_replace('/\s+/', '', $currentHabitation->getAdresse()));
-
-            foreach( $habitations as $habitation ) {
-                $adresse = preg_replace('/\s+/', '', $habitation->getAdresse());
-                dump($adresse);
-                dump($currentHabitationAdresse);
-                if(strtolower($adresse) == $currentHabitationAdresse && $currentHabitation->getCodePostal() == $habitation->getCodePostal()&& strtolower($currentHabitation->getVille()) == strtolower($habitation->getVille()) && strtolower($currentHabitation->getPays()) == strtolower($habitation->getPays())){
-                    $habitation->addHabitant($habitant);
-                    $em->persist($habitation);
-                    $found = true ;
-                    dump("je suis ici dans la verif exist");
-                    break;
-                }else if ($habitation->getId() == $oldhabitant->getHabitation()->getId()){
-                    $habitation->removeHabitant($oldhabitant);
-                    dump("je suis ici dans l'autre ");
-                }
-            }
         
             if(!$found){
-                $oldhabitant->getHabitation()->removeHabitant($habitant);
                 $newHabitation = new Habitation();
                 $newHabitation->setAdresse($currentHabitation->getAdresse());
                 $newHabitation->setPays($currentHabitation->getPays());
@@ -121,7 +103,7 @@ class RecensementController extends AbstractController
                 $newHabitation->setComplement($currentHabitation->getComplement());
                 $newHabitation->addHabitant($habitant);
                 $em->persist($currentHabitation);
-            }*/
+            }
         // $em->flush();
 
             //return $this->redirect('/ListHabitant');
