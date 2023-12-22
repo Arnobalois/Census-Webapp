@@ -34,7 +34,7 @@ class HabitationRepository extends ServiceEntityRepository
     public function getHabitantsForHabitat($habitatId): array
     {
         return $this->createQueryBuilder('h')
-            ->select('habitant.id', 'habitant.Prenom', 'habitant.Nom', 'habitant.DateDeNaissance')
+            ->select('habitant.id', 'habitant.Prenom', 'habitant.Nom', 'habitant.DateDeNaissance','habitant.Genre')
             ->leftJoin('h.Habitants', 'habitant')
             ->where('h.id = :habitatId')
             ->setParameter('habitatId', $habitatId)

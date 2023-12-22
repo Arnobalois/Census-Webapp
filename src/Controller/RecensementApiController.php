@@ -52,7 +52,7 @@ class RecensementApiController extends AbstractController
     {
         // Check if the Habitant with the specified ID exists
         if ($habitation === null) {
-            return new JsonResponse(['error' => 'Habitation not found'], 404);
+            return new JsonResponse([['error' => 'Habitation not found'], 404]);
         }
         $id_habitat = $habitation->getId();
         $habitants = $habitantRepository->getHabitantsForHabitat($id_habitat);

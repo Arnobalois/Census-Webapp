@@ -1,4 +1,4 @@
-// HabitationList.js
+// ListHabitations.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, Accordion, Card, Button } from 'react-bootstrap';
@@ -79,16 +79,31 @@ const ListHabitations = () => {
                 <td>{habitation.NbHabitants}</td>
                 <td>{habitation.AgeMoyen !== null ? calculateAge(habitation.AgeMoyen) : 'Pas de données'}</td>
               </tr>
-              {expandedRow === habitation.id && habitantData.length > 0 && (
+              {expandedRow === habitation.id && habitantData.length > 0 && habitantData[0].Prenom != null && (
                 <tr>
                   <td colSpan="3">
                     {/* Display details of people living at the same address */}
-                    <ul className='d-flex flex-column bg-secondary'>
-                      {habitantData.map((habitant) => (
-                        <li key={habitant.id}>
-                          {habitant.Prenom} {habitant.Nom} a {calculateAge(habitant.DateDeNaissance.date)} ans
-                        </li>
-                      ))}
+                    <ul className="list-unstyled bg-white">
+                      <Table striped bordered hover responsive>
+                        <thead>
+                          <tr>
+                            <th>Prénom</th>
+                            <th>Nom</th>
+                            <th>Âge</th>
+                            <th>Genre</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {habitantData.map((habitant) => (
+                            <tr key={habitant.id}>
+                              <td>{habitant.Prenom}</td>
+                              <td>{habitant.Nom}</td>
+                              <td>{calculateAge(habitant.DateDeNaissance.date) - 1} ans</td>
+                              <td>{habitant.Genre}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </Table>
                     </ul>
                   </td>
                 </tr>
@@ -102,4 +117,3 @@ const ListHabitations = () => {
 };
 
 export default ListHabitations;
-

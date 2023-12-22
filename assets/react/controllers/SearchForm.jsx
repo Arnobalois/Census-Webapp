@@ -66,7 +66,7 @@ const YourComponent = () => {
             <div className="mb-3 d-flex justify-content-between align-items-center">
                 <input
                     type="text"
-                    placeholder="Chercher par Nom/Prenom..."
+                    placeholder="Chercher par Nom ou Prenom"
                     className="form-control mx-2"
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
